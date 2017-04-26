@@ -1,7 +1,8 @@
 var express = require('express');
-var server = require('http').Server(app);
+// var app = express();
+// var server = require('http').Server(app);
 var router = express.Router();
-var io = require('socket.io')(server); 
+// var io = require('socket.io').listen(server); 
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -9,14 +10,16 @@ router.get('/', function(req, res, next) {
 });
 
 
-io.on('connection', function (socket) {
-  socket.emit('news', { hello: 'world' });
+// io.on('connection', function (socket) {
 
-  socket.on('my other event', function (data) {
-    console.log(data);
-  });
+//   // socket.emit('news', { hello: 'world' });
 
-  
-});
+//   socket.on('join', function (data) {
+//     console.log(data);
+//     socket.emit('messages','Hello from server')
+//   });
+
+
+// });
 
 module.exports = router;
