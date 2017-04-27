@@ -6,7 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
-var users = require('./routes/users');
+var game = require('./routes/game');
 
 var app = express();
 
@@ -26,25 +26,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/users', users);
-
-// // catch 404 and forward to error handler
-// app.use(function(req, res, next) {
-//   var err = new Error('Not Found');
-//   err.status = 404;
-//   next(err);
-// });
-
-// // error handler
-// app.use(function(err, req, res, next) {
-//   // set locals, only providing error in development
-//   res.locals.message = err.message;
-//   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-//   // render the error page
-//   res.status(err.status || 500);
-//   res.render('error');
-// });
+app.use('/game', game);
 
 var debug = require('debug')('court-piece:server');
 app.set('port', process.env.PORT || 3000);
@@ -55,12 +37,18 @@ var server = app.listen(app.get('port'), function() {
 
 var io = require('socket.io').listen(server);
 
-io.sockets.on('connection', function (socket) {
-    socket.emit('news', { hello: 'world' });
-    socket.on('join', function (data) {
-        console.log(data);
-        socket.emit("messages","hello from server");
+io.on('connection', function (socket) {
+	console.log("User connected ",socket.id);
+
+    socket.on('disconnect',function(client){
+    	console.log("User disconnected",client.id);
+    })
+
+    socket.on('chat message', function(msg){
+    	console.log('message: ' + msg);
+    	socket.broadcast.emit("message",msg);
     });
+
 });
 
 
